@@ -1,0 +1,135 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="mb-4">
+
+<h2 class="text-center display-5">Archived Listings</h2>
+<div class="container">
+  <div class="row ">
+    <div class="col d-flex pl-3 mr-5 pr-3">
+    {% if categorySelected %}
+    <a href="{% url 'index' %}" class="btn btn-outline-primary">Back to All Listings</a>
+    <!--<option value="TBC">Remove Filter</option>-->
+    
+    {% endif %}
+  </div>
+    <div class="col d-flex pl-3 mr-5 pr-3 ms-auto justify-content-end">
+    <form action="{% url 'categoryFilter' %}" method="POST">
+      {% csrf_token %}
+      <select name="category" id="category" class="form-select" onChange="form.submit()" aria-label="Select Category">
+        <option selected>Filter by Category</option>
+        {% for cat in categories %} 
+          <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+        
+      </select>
+    </form>
+    </div>
+
+  </div>
+</div>
+</div>
+<div class="card-deck row row-cols-1 row-cols-sm-2 row-cols-lg-4">
+    {% for listing in listingPage %}
+    <!--<article class=""media content-section>
+        <div class=""media-body>
+            
+            <h2><a class="article-title" href="#">{{ listing.Title }}</a></h2>
+            <p class="article-content">{{ listing.Description }}</p>
+            <div class="article metadata">
+                <small class="text-muted">Listed {{ listing.createdAt }} under <a class="mr-2" href="#">{{ listing.Category }}</a></small>
+           </div>
+           
+        </div>
+    </article>
+-->
+
+    <div>
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <img src="{{ listing.Image }}" class="card-img-top rounded">
+
+                <div class="mt-2">
+                    <h5 class="card-title"><a href="{% url 'listing' listing.id %}">{{ listing.Title }}</a></h5>
+                    <p class="card-text text-break">{{ listing.Description }}</p>
+                    <div class="text-end">
+                        <small class="text-muted">Listed {{ listing.createdAt }} in <a class="mr-2" href="#">{{ listing.Category }}</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% empty %}
+    <li>No archived listings.</li>
+    {% endfor %}
+    
+    
+    </div>
+    <div class="container">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+              {% if listingPage.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% if listingPage.number|add:"-1" != 1 %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ listingPage.previous_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&lsaquo;</span>
+                </a>
+              </li>
+              {% endif %}
+              {% endif %}
+             
+              {% for num in listingPage.paginator.page_range %}
+                {% if listingPage.paginator.page_range == 1 %}
+                    
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+              {% endfor %}
+              
+              {% if listingPage.has_next %}
+                {% if listingPage.number|add:"1" != 2 %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ listingPage.next_page_number }}" aria-label="Previous">
+                  <span aria-hidden="true">&rsaquo;</span>
+                </a>
+              </li>
+                {% endif %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ listingPage.paginator.num_pages }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        
+    <!--    <hr>
+    {% if listingPage.has_previous %}
+        <a href="?page=1">&laquo First</a>
+        <a href="?page={{ listingPage.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {{ listingPage }}
+
+    {% if listingPage.has_next %}
+            <a href="?page={{ listingPage.next_page_number }}">Next</a>
+            <a href="?page={{ listingPage.paginator.num_pages }}">Last &raquo </a>
+    {% endif %}
+    </div>
+    --> 
+
+    <!--Has Previous:{{ listingPage.has_previous }}<br/>
+    Has Next:{{ listingPage.has_next }}<br/>
+    Current Page:{{ listingPage.number }}<br/>
+    Number of Pages: {{ listingPage.paginator.num_pages }}  
+    -->
+
+    {% endblock %}

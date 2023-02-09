@@ -1,0 +1,18 @@
+body {
+    padding: 10px;
+
+}
+
+.asteriskField {
+    display: none;
+}
+
+#loginText {
+    color: rgb(75, 177, 207);
+    padding-right: 20px;
+}
+
+#navLink {
+    color: rgb(94, 244, 255);
+}
+

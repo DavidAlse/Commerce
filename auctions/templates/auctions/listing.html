@@ -1,0 +1,168 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+
+<div>
+    {% if message %}
+    {% if success %}
+    <div class="mt-3 alert alert-success alert-dismissible fade show" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div class=" mt-3 alert alert-danger alert-dismissible fade show" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-3 mt-4 mb-4 d-flex">
+            <img src="{{ listing.Image }}" class="img-fluid mx-auto flex-md-grow-1 rounded d-block ">
+        </div>
+
+
+        <div class="col-md-6 d-flex flex-column ">
+            <h2 class="display-6">{{ listing.Title }}</h2>
+            <hr class="mt-1">
+        
+        <p>{{ listing.Description }}</p>
+        <small class="text-muted mt-auto p-2 align-self-end">Listed {{ listing.createdAt }} by <a class="mr-2" href="#">{{ listing.owner }}</a> in <a class="mr-2" href="#">{{ listing.Category }}</a></small>
+        <!--need to add link to users listings
+        #add link to category -->
+        </div>
+    
+        <div class="col-md-2 d-flex flex-column">
+
+            <div class="d-flex align-self-center row mt-3 ">
+                
+                     
+                {% if isOwner and isActive %}
+                <div class="">
+                    <form action="{% url 'closeListing' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger justify-content-center">Close Listing</button>
+                    </form>
+                </div>
+                
+                {% endif %}
+                {% if not isOwner %}
+                
+                {% if isWatched %}
+                    <form action="{% url 'removeWatchlist' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mx-auto">
+                        <button type="submit" class="btn btn-outline-danger text-nowrap">Remove from Watchlist</button>
+                        </div>
+                    </form>
+                
+                
+                     
+
+                {% elif not user.is_authenticated %}
+
+                {% else %}
+
+                    <form action="{% url 'addWatchlist' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mx-auto">
+                        <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                {% endif %}
+                </div>
+              
+                
+            {% if isActive %}
+
+            <div class="row pt-2 mt-5  border rounded">
+                <ul>
+                <h6 class="text-muted text-center mb-0 pb-0">Current bid </h6>
+                <h4 class="text-center mt-0 pt-0 display-6 fw-normal">{{ listing.currentBid }} </h3>
+                <!--^^make this current bid not starting bid-->
+                
+                
+                {% else %}
+                <div class="row pt-2 mt-5  border rounded">
+                 <ul>
+                 <h6 class="text-muted text-center mb-0 pb-0">Sold to</h6>
+                 <h4 class="text-center mt-0 pt-0 display-6 fw-normal">{{ listing.currentBid.bidder }} </h3>
+                 <h6 class="text-muted text-center mb-0 pb-0">for </h6>
+                    <!--^^make this current bid not starting bid-->
+                <h4 class="text-center mt-0 pt-0 display-6 fw-normal">{{ listing.currentBid }} </h3>
+                </div>
+                {% endif %}
+            {% if user.is_authenticated and isActive %}
+            <!--What if theyre not authenticated?-->
+            
+            </ul>
+            
+            <form action="{% url 'receiveBid' listing.id %}" method="POST">
+                {% csrf_token %}
+                <div class="input-group mb-2 mt-4 has-validation">
+                <span class="input-group-text ">$</span>
+                <input type="number" inputmode="numeric" name="newBid" class="form-control" required min=0 placeholder="Place a bid" step=0.50 autocomplete="off"></input>
+                </div>
+                <div>
+                <button type="submit" class="btn btn-sm btn-outline-danger float-end mb-3">Place Bid</button>
+                
+            </div>
+            
+            </form>
+            
+           
+            
+            
+           
+            {% endif %}
+        </div>
+       
+
+        </div>
+        
+
+
+    </div>
+    <div class="row justify-content-center"> 
+        <div class="col-md-4 mt-4 mb-4 d-flex  flex-column ">
+             
+        <h6 class="">Comments</h4>
+        {% if user.is_authenticated %}
+        <div>
+        <form action="{% url 'newComment' listing.id %}" method="POST">
+            {% csrf_token %}
+            <textarea name="newComment" class="form-control" placeholder="Write your comment here" autofill=False></textarea>
+            <div>
+            <button type="submit" class="btn btn-sm btn-outline-danger float-end mt-2 mb-3">Submit Comment</button>
+            </div>
+        </form>
+        </div> 
+        {% endif %}
+        
+        {% for comment in allComments %}
+            <div class="list-group mb-2">
+            
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1 text-primary">{{ comment.commenter }}</h6>
+                      <small class="text-muted float-end">Posted {{ comment.posted }}</small>
+                    </div>
+                    <p class="mb-1">{{ comment.commentText }}</p>
+                    
+                  </a>
+            
+            </div>  
+        {% endfor %}
+        
+        </div>
+    </div>
+    </div> <!--This last div is actually closing the 'main'tag. Weird.-->
+    
+
+    {% endblock %}

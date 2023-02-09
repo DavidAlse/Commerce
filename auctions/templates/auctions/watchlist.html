@@ -1,0 +1,94 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    
+        
+        <div class="mb-4">
+
+            <h2 class="text-center display-5">{{ currentUser }}'s Watchlist </h2>
+            <div class="container">
+              <div class="row ">
+                <div class="col d-flex pl-3 mr-5 pr-3">
+                <a href="{% url 'index' %}" class="btn btn-outline-primary">Back to All Listings</a>
+              </div>
+              <!--category filter could go in here later maybe-->
+              </div>
+
+            </div>
+            </div>
+            <div class="card-deck row row-cols-1 row-cols-sm-2 row-cols-lg-4">
+                {% for watch in watching %}
+                
+                
+                
+                <div>
+                    <div class="card mb-3">
+                        <div class="card-body">
+            
+                            <img src="{{ watch.Image }}" class="card-img-top rounded">
+            
+                            <div class="mt-2">
+                                <h5 class="card-title"><a href="{% url 'listing' watch.id %}">{{ watch.Title }}</a></h5>
+                                <p class="card-text text-break">{{ watch.Description }}</p>
+                                <div class="text-end">
+                                    <small class="text-muted">Listed {{ watch.createdAt }} in <a class="mr-2" href="#">{{ watch.Category }}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                
+                
+                </div>
+                
+                <div class="container ">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                          {% if listingPage.has_previous %}
+                          
+                          <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                              <span aria-hidden="true">&laquo;</span>
+                            </a>
+                          </li>
+                          {% if listingPage.number|add:"-1" != 1 %}
+                          <li class="page-item">
+                            <a class="page-link" href="?page={{ listingPage.previous_page_number }}" aria-label="Previous">
+                              <span aria-hidden="true">&lsaquo;</span>
+                            </a>
+                          </li>
+                          {% endif %}
+                          {% endif %}
+                         
+                          {% for num in listingPage.paginator.page_range %}
+                            {% if listingPage.paginator.page_range == 1 %}
+                                
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                          {% endfor %}
+                          
+                          {% if listingPage.has_next %}
+                            {% if listingPage.number|add:"1" != 2 %}
+                          <li class="page-item">
+                            <a class="page-link" href="?page={{ listingPage.next_page_number }}" aria-label="Previous">
+                              <span aria-hidden="true">&rsaquo;</span>
+                            </a>
+                          </li>
+                            {% endif %}
+                          <li class="page-item">
+                            <a class="page-link" href="?page={{ listingPage.paginator.num_pages }}" aria-label="Next">
+                              <span aria-hidden="true">&raquo;</span>
+                            </a>
+                          </li>
+                          {% endif %}
+                        </ul>
+                      </nav>
+                
+                
+
+{% endblock %}

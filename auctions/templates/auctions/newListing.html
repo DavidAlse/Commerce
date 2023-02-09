@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<h2 class="text-center display-5">Create a New Listing</h2>
+<br>
+    {% crispy form %}
+     
+<!--
+
+<form autocomplete=off action="{%url 'newListing' %}" method='post'>
+    {% csrf_token %}
+    
+    <div class="form-group">
+        
+        {{ form|crispy }}
+    
+    <div class="form-group">
+    <input class="btn btn-success float-right" type="submit" name="submitNewPage">
+    
+</form>
+
+--> 
+{% endblock %}
